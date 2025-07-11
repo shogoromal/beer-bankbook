@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String     @id @default(uuid())
+  email     String     @unique
+  name      String
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  drinkings Drinking[]
+
+  @@map("users")
+}
+
+model BeerCategory {
+  id       String  @id @default(uuid())
+  category String
+  beers    Beer[]
+
+  @@map("beer_category")
+}
+
+model Beer {
+  id         String       @id @default(uuid())
+  name       String
+  categoryId String?      @map("category_id")
+  category   BeerCategory @relation(fields: [categoryId], references: [id])
+  drinkings  Drinking[]
+
+  @@map("beer")
+}
+
+model RestaurantCategory {
+  id       String  @id @default(uuid())
+  category String
+  restaurants Restaurant[]
+
+  @@map("restaurant_category")
+}
+
+model Restaurant {
+  id         String             @id @default(uuid())
+  name       String
+  categoryId String?            @map("category_id")
+  category   RestaurantCategory @relation(fields: [categoryId], references: [id])
+  drinkings  Drinking[]
+
+  @@map("restaurant")
+}
+
+model Drinking {
+  id           String     @id @default(uuid())
+  userId       String     @map("user_id")
+  beerId       String?    @map("beer_id")
+  restaurantId String?    @map("restaurant_id")
+  amount       Int
+  time         DateTime
+  text         String?
+  share        Boolean    @default(false)
+  createdAt    DateTime   @default(now()) @map("created_at")
+  updatedAt    DateTime   @updatedAt @map("updated_at")
+
+  user       User       @relation(fields: [userId], references: [id])
+  beer       Beer?      @relation(fields: [beerId], references: [id])
+  restaurant Restaurant?@relation(fields: [restaurantId], references: [id])
+
+  @@map("drinking")
+  @@index([userId, time])
+} 

@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgresql://beer_user:secure_password@postgres:5432/beer_bankbook
+      - NEXTAUTH_SECRET=${NEXTAUTH_SECRET}
+      - NEXTAUTH_URL=${NEXTAUTH_URL}
+    depends_on:
+      - postgres
+    networks:
+      - beer-network
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_DB=beer_bankbook
+      - POSTGRES_USER=beer_user
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - beer-network
+    restart: unless-stopped
+
+  pgbouncer:
+    image: edoburu/pgbouncer:latest
+    environment:
+      - DB_HOST=postgres
+      - DB_USER=beer_user
+      - DB_PASSWORD=${POSTGRES_PASSWORD}
+      - DB_NAME=beer_bankbook
+      - POOL_MODE=transaction
+      - MAX_CLIENT_CONN=100
+      - DEFAULT_POOL_SIZE=20
+    ports:
+      - "6432:5432"
+    depends_on:
+      - postgres
+    networks:
+      - beer-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  beer-network:
+    driver: bridge 
