@@ -2,6 +2,20 @@
 
 ビールの飲酒記録を管理し、支出を追跡できるWebアプリケーション
 
+## 🆕 最新アップデート
+
+- **データベース連携機能**: PostgreSQLからリアルタイムでデータを取得
+- **ビール追加機能**: 新しいビールをデータベースに追加可能
+- **検索機能強化**: カテゴリ、アルコール度数、醸造所での詳細フィルタリング
+- **API実装**: RESTful API でデータ操作が可能
+
+## 📚 ドキュメント
+
+- [📋 ドキュメント一覧](docs/INDEX.md) - 全ドキュメントの目次とガイド
+- [📖 機能ガイド](docs/FEATURES.md) - アプリの機能と使い方
+- [🔧 API仕様書](docs/API.md) - REST API の詳細仕様
+- [👨‍💻 開発者ガイド](docs/DEVELOPMENT.md) - 開発環境構築と機能拡張
+
 ## 開発環境の起動方法
 
 ### 前提条件
@@ -68,6 +82,33 @@ docker-compose exec postgres psql -U beer_user -d beer_bankbook -f /docker-entry
     - 🍺 **お酒を追加** → `/drinking/new`
     - 📊 **記録・統計を見る** → `/drinking`
     - 👥 **友人を探す** → `/friends`
+
+#### 新機能へのアクセス
+- **飲酒記録作成**: `http://localhost:3000/drinking/new`
+  - データベースから10種類のビールを選択可能
+  - 詳細検索・フィルター機能搭載
+  - 新しいビールの追加機能付き
+- **ビール追加**: `http://localhost:3000/beers/new`
+  - 新しいビールをデータベースに登録
+  - リアルタイムプレビュー機能
+- **API エンドポイント**: `http://localhost:3000/api/`
+  - ビール一覧取得: `/api/beers`
+  - ビール追加: `POST /api/beers`
+  - カテゴリ一覧: `/api/beer-categories`
+  - レストラン一覧: `/api/restaurants`
+  - 飲酒記録保存: `POST /api/drinking`
+
+#### pgAdmin（データベース管理）
+- URL: `http://localhost:8080`
+- **ログイン情報**:
+  - メールアドレス: `admin@beerbankbook.com`
+  - パスワード: `admin123`
+- **データベース接続設定**:
+  - ホスト名: `postgres`
+  - ポート: `5432`
+  - データベース名: `beer_bankbook`
+  - ユーザー名: `beer_user`
+  - パスワード: `secure_password`
 
 #### PostgreSQL直接接続
 - Host: localhost
@@ -175,16 +216,29 @@ docker-compose exec frontend npm install
 ```
 beer-bankbook/
 ├── frontend/                 # Next.jsアプリケーション
-├── prisma/                   # Prismaスキーマ
-├── database/                 # データベース関連ファイル
-│   ├── init/                 # 初期化SQL
-├── docker-compose.yml        # 開発環境用
-├── docker-compose.prod.yml   # 本番環境用
-└── README.md                 # このファイル
+│   ├── src/
+│   │   ├── app/             # App Router ベースのページ
+│   │   │   ├── api/        # API Routes（新実装）
+│   │   │   ├── drinking/   # 飲酒記録関連ページ
+│   │   │   └── beers/      # ビール管理ページ（新実装）
+│   │   └── lib/            # 共通ライブラリ
+│   └── prisma/             # Prismaスキーマ
+├── database/                # データベース関連ファイル
+│   └── init/               # 初期化SQL
+├── docs/                   # ドキュメント（新追加）
+│   ├── API.md              # API仕様書
+│   ├── FEATURES.md         # 機能ガイド
+│   └── DEVELOPMENT.md      # 開発者ガイド
+├── docker-compose.yml      # 開発環境用
+├── docker-compose.prod.yml # 本番環境用
+└── README.md               # このファイル
 ```
 
 ## 主要な技術スタック
 - **フロントエンド**: Next.js 15.3.5 + React 19 + TypeScript + Tailwind CSS
+- **バックエンド**: Next.js API Routes + Prisma ORM
 - **データベース**: PostgreSQL 16
-- **ORM**: Prisma
-- **開発環境**: Docker + Docker Compose 
+- **ORM**: Prisma 6.x
+- **DB管理**: pgAdmin 4
+- **開発環境**: Docker + Docker Compose
+- **API**: RESTful API (JSON) 
