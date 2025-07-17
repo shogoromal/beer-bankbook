@@ -182,6 +182,83 @@ docker-compose exec postgres psql -U beer_user -d beer_bankbook
 docker-compose exec postgres psql -U beer_user -d beer_bankbook -c "\\dt"
 ```
 
+## Makefileコマンド
+
+プロジェクトには便利なMakefileが含まれており、一般的な操作を簡単に実行できます。
+
+### 基本操作
+```bash
+# 使用可能なコマンド一覧を表示
+make help
+
+# 初回セットアップ（推奨）
+make setup
+
+# アプリケーション起動
+make start
+
+# アプリケーション停止
+make stop
+
+# アプリケーション再起動
+make restart
+
+# ログ表示
+make logs
+```
+
+### データベース操作
+```bash
+# データベース初期化
+make db-init
+
+# サンプルデータ追加
+make db-sample
+
+# データベース状況確認
+make db-status
+
+# データベースリセット（全削除）
+make db-reset
+
+# データベースシェル接続
+make db-shell
+```
+
+### 開発用コマンド
+```bash
+# フロントエンドのみ再起動
+make dev-restart-frontend
+
+# フロントエンドログのみ表示
+make dev-logs
+
+# フロントエンドの再ビルド
+make dev-rebuild
+
+# ヘルスチェック
+make health
+```
+
+### メンテナンス
+```bash
+# 不要なファイル・イメージ削除
+make clean
+```
+
+### 推奨セットアップ手順
+```bash
+# 1. プロジェクトのクローン
+git clone <repository-url>
+cd beer-bankbook
+
+# 2. 自動セットアップ実行
+make setup
+
+# 3. アプリケーションの確認
+# ブラウザで http://localhost:3000 を開く
+```
+
 ## トラブルシューティング
 
 ### ポートが既に使用されている場合
